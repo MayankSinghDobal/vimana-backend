@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/MayankSinghDobal/vimana-backend#readme",
   "dependencies": {
+    "@supabase/supabase-js": "^2.57.4",
+    "dotenv": "^17.2.2",
     "express": "^5.1.0"
   }
 }
