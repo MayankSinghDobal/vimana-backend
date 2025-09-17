@@ -1,12 +1,25 @@
-require('dotenv').config(); // Load environment variables
+require('dotenv').config();
 const express = require('express');
 const { createClient } = require('@supabase/supabase-js');
+const cors = require('cors');
 const app = express();
 const port = 3001;
 
 app.use(express.json());
 
-// Initialize Supabase client
+// Define the allowed origin
+const allowedOrigins = ['http://localhost:3000'];
+
+app.use(cors({
+  origin: function(origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));// Enable CORS for all routes
+
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
 
 app.get('/', async (req, res) => {
