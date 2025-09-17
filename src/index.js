@@ -7,7 +7,6 @@ const port = 3001;
 
 app.use(express.json());
 
-// Define the allowed origin
 const allowedOrigins = ['http://localhost:3000'];
 
 app.use(cors({
@@ -18,15 +17,15 @@ app.use(cors({
       callback(new Error('Not allowed by CORS'));
     }
   }
-}));// Enable CORS for all routes
+}));
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
 
 app.get('/', async (req, res) => {
   try {
-    const { data, error } = await supabase.from('test_table').select('*');
+    const { data, error } = await supabase.from('rides').select('*');
     if (error) throw error;
-    res.send(`Welcome to Vimana Backend! Supabase test: ${JSON.stringify(data)}`);
+    res.send(`Welcome to Vimana Backend! Rides data: ${JSON.stringify(data)}`);
   } catch (error) {
     res.status(500).send(`Error: ${error.message}`);
   }
