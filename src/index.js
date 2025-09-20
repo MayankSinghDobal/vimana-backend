@@ -20,7 +20,7 @@ app.use(cors({
   }
 }));
 
-// Supabase admin client for user sync and ride operations
+// Supabase admin client for user sync and operations
 const supabaseAdmin = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 const clerk = new Clerk({ secretKey: process.env.CLERK_SECRET_KEY });
 
@@ -60,7 +60,7 @@ app.get('/profile', authenticateClerk, async (req, res) => {
     const user_id = req.userId; // Clerk's sub
     const { data, error } = await supabaseAdmin
       .from('users')
-      .select('name, email, role')
+      .select('name, email, role, phone')
       .eq('clerk_id', user_id)
       .single();
 
@@ -77,6 +77,38 @@ app.get('/profile', authenticateClerk, async (req, res) => {
   } catch (error) {
     console.error('Error in /profile:', error.stack);
     res.status(500).send(`Error fetching profile: ${error.message}`);
+  }
+});
+
+// PUT endpoint for updating user profile
+app.put('/profile', authenticateClerk, async (req, res) => {
+  try {
+    const { name, phone } = req.body;
+    if (!name) {
+      return res.status(400).send('Name is required.');
+    }
+
+    const user_id = req.userId; // Clerk's sub
+    const { data, error } = await supabaseAdmin
+      .from('users')
+      .update({ name, phone, updated_at: new Date().toISOString() })
+      .eq('clerk_id', user_id)
+      .select('name, email, role, phone')
+      .single();
+
+    if (error) {
+      console.error('Error updating profile:', error);
+      throw error;
+    }
+
+    if (!data) {
+      return res.status(404).send('User profile not found');
+    }
+
+    res.status(200).json(data);
+  } catch (error) {
+    console.error('Error in /profile update:', error.stack);
+    res.status(500).send(`Error updating profile: ${error.message}`);
   }
 });
 
