@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/MayankSinghDobal/vimana-backend#readme",
   "dependencies": {
+    "@clerk/clerk-sdk-node": "^4.13.23",
     "@supabase/supabase-js": "^2.57.4",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
